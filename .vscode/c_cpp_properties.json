@@ -3,8 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/**"
+                "${workspaceFolder}",
+                "${workspaceFolder}/lib/include/**",
+                "${workspaceFolder}/lib/include/srslte/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
@@ -13,7 +14,8 @@
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
-                    "${workspaceFolder}"
+                    "${workspaceFolder}",
+                    "${workspaceFolder}/lib/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
