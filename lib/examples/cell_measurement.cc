@@ -312,7 +312,6 @@ int main(int argc, char **argv) {
   srslte_ue_cellsearch_t        cs;
   srslte_ue_cellsearch_result_t found_cells[3];
   int32_t                           nof_freqs;
-  srslte_earfcn_t               channels[prog_args.earfcn_list.size()];
   int32_t                      freq;
   uint32_t                      n_found_cells = 0;
 
@@ -321,6 +320,8 @@ int main(int argc, char **argv) {
   if (parse_args(&prog_args, argc, argv)) {
     exit(-1);
   }
+  printf("- Scanning %d EARFCNs\n", prog_args.earfcn_vector.size());
+  srslte_earfcn_t               channels[prog_args.earfcn_vector.size()];
 
   printf("Opening RF device...\n");
   if (srslte_rf_open(&rf, prog_args.rf_args)) {
