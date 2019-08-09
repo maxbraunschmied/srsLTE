@@ -229,7 +229,7 @@ static int write_sib1_data(tower_info_t tower){
       long seconds = (unsigned long)time(NULL);
 
       os << tower.mcc << ","
-        << tower.mnc << ", "
+        << tower.mnc << ","
         << tower.tac << ","
         << tower.cid << ","
         << tower.phyid << ","
