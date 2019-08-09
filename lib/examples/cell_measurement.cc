@@ -307,7 +307,6 @@ int main(int argc, char **argv) {
   float rssi_utra=0,rssi=0, rsrp=0, rsrq=0, snr=0;
   cf_t *ce[SRSLTE_MAX_PORTS];
   float cfo = 0;
-  bool acks[SRSLTE_MAX_CODEWORDS] = {false};
 
   srslte_ue_cellsearch_t        cs;
   srslte_ue_cellsearch_result_t found_cells[3];
@@ -387,6 +386,7 @@ int main(int argc, char **argv) {
   /* begin cell search loop */
   freq = -1;
   while (! go_exit) {
+    bool acks[SRSLTE_MAX_CODEWORDS] = {false};
     /* set rf_freq */
     freq++;
     if (freq == nof_freqs) {
