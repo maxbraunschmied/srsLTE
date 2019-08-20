@@ -220,6 +220,8 @@ typedef struct {
   uint16_t    enodeb_id;
   uint16_t    sector_id;
   double      cfo;
+  double      rsrq;
+  double      snr;
   std::string      raw_sib1;
 } tower_info_t;
 
@@ -239,6 +241,8 @@ static int write_sib1_data(tower_info_t tower){
         << tower.enodeb_id << ","
         << tower.sector_id << ","
         << tower.cfo << ","
+        << tower.rsrq << ","
+        << tower.snr << ","
         << tower.raw_sib1 << ","
         << seconds;
       // https://stackoverflow.com/questions/1374468/stringstream-string-and-char-conversion-confusion
@@ -304,7 +308,6 @@ int main(int argc, char **argv) {
   int n;
   uint8_t bch_payload[SRSLTE_BCH_PAYLOAD_LEN];
   int sfn_offset;
-  float rssi_utra=0,rssi=0, rsrp=0, rsrq=0, snr=0;
   cf_t *ce[SRSLTE_MAX_PORTS];
   float cfo = 0;
 
@@ -545,9 +548,10 @@ int main(int argc, char **argv) {
       bool exit_decode_loop = false;
       //state = DECODE_MIB;
       tower_info_t tower;
-      tower.frequency = freq;
+      tower.frequency = channels[freq].fd;
       tower.earfcn = channels[freq].id;
       int mib_tries = 0;
+      float rssi_utra=0,rssi=0, rsrp=0, rsrq=0, snr=0;
       state = DECODE_MIB;
       while ((sf_cnt < prog_args.nof_subframes || prog_args.nof_subframes == -1) && !go_exit && !exit_decode_loop) {
 
@@ -687,6 +691,8 @@ int main(int argc, char **argv) {
                 printf("\n");
               }
               tower.rssi = 10 * log10(rssi * 1000) - rx_gain_offset;
+              tower.rsrq = 10*log10(rsrq);
+              tower.snr = 10*log10(snr);
               if (tower.rssi > -200 && tower.rssi < 200) {
                 // If you know of a better way to test that it's a real number (not NaN or ∞,) I'd like to hear it.
                 tower.cfo = srslte_ue_sync_get_cfo(&ue_sync) / 1000;
