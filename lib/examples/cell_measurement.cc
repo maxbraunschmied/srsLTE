@@ -217,7 +217,7 @@ typedef struct {
   uint16_t    earfcn;
   double      rssi;
   double      frequency;
-  uint16_t    enodeb_id;
+  uint32_t    enodeb_id;
   uint16_t    sector_id;
   double      cfo;
   double      rsrq;
