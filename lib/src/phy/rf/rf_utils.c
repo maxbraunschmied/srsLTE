@@ -211,6 +211,7 @@ int rf_cell_search(srslte_rf_t *rf, uint32_t nof_rx_antennas,
   if (cell) {
     cell->id = found_cells[max_peak_cell].cell_id;
     cell->cp = found_cells[max_peak_cell].cp; 
+    cell->peak = 20*log10(found_cells[max_peak_cell].peak*1000);
   }
 
   // Save CFO

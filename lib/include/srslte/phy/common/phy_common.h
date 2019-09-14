@@ -176,6 +176,7 @@ typedef struct SRSLTE_API {
   uint32_t nof_prb;
   uint32_t nof_ports; 
   uint32_t id;
+  float peak;
   srslte_cp_t cp;
   srslte_phich_length_t phich_length;
   srslte_phich_resources_t phich_resources;
