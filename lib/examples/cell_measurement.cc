@@ -485,7 +485,7 @@ int main(int argc, char **argv) {
           }
         } else {
           fprintf(stderr, "Invalid number of PRB %d\n", cell.nof_prb);
-          exit(-1);
+          continue;
         }
 
       INFO("Stopping RF and flushing buffer...\n");
@@ -719,6 +719,9 @@ int main(int argc, char **argv) {
           printf("Finding PSS... Peak: %8.1f, FrameCnt: %d, State: %d\r",
             srslte_sync_get_peak_value(&ue_sync.sfind),
             ue_sync.frame_total_cnt, ue_sync.state);
+          if(sf_cnt > 10000) {
+            exit_decode_loop = true;
+          }
         }
 
         sf_cnt++;
