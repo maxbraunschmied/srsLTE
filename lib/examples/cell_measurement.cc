@@ -371,10 +371,12 @@ int main(int argc, char **argv) {
     exit(-1);
   }
 
+	    fprintf(stderr, "******* first init multi\n");
   if (srslte_ue_cellsearch_init_multi(&cs, cell_detect_config.max_frames_pss, srslte_rf_recv_wrapper, 1, (void*) &rf)) {
     fprintf(stderr, "Error initiating UE cell detect\n");
     exit(-1);
   }
+	    fprintf(stderr, "******* first init multi done \n");
 
   if (cell_detect_config.max_frames_pss) {
     srslte_ue_cellsearch_set_nof_valid_frames(&cs, cell_detect_config.nof_valid_pss_frames);
@@ -430,7 +432,11 @@ int main(int argc, char **argv) {
           cell.id = found_cells[i].cell_id;
           cell.cp = found_cells[i].cp;
           cell.peak = 20*log10(found_cells[i].peak*1000);
+
+
+	    fprintf(stderr, "******* rf_mib_decoder\n");
           ret = rf_mib_decoder(&rf, 1, &cell_detect_config, &cell, NULL);
+	    fprintf(stderr, "******* rf_mib_decoder_done\n");
           if (ret < 0) {
             fprintf(stderr, "Error decoding MIB\n");
             continue;
@@ -455,8 +461,11 @@ int main(int argc, char **argv) {
 
       uint32_t ntrial=0;
       const int MAX_ATTEMPTS = 1;
+      /*
       do {
+	    fprintf(stderr, "******* rf_search_and_decode_mib\n");
         ret = rf_search_and_decode_mib(&rf, 1, &cell_detect_config, prog_args.force_N_id_2, &cell, &cfo);
+	    fprintf(stderr, "******* rf_search_and_decode_mib_done\n");
         if (ret < 0) {
           fprintf(stderr, "Error searching for cell\n");
           exit(-1);
@@ -488,10 +497,14 @@ int main(int argc, char **argv) {
           continue;
         }
 
-      INFO("Stopping RF and flushing buffer...\n");
+	/*
+      printf("Stopping RF and flushing buffer...\n");
       srslte_rf_stop_rx_stream(&rf);
       srslte_rf_flush_buffer(&rf);
+      printf("DONE Stopping RF and flushing buffer...\n");
+      */
 
+	    fprintf(stderr, "******* init multi\n");
       if (srslte_ue_sync_init_multi(&ue_sync, cell.nof_prb, cell.id==1000, srslte_rf_recv_wrapper, 1, (void*) &rf)) {
         fprintf(stderr, "Error initiating ue_sync\n");
         return -1;
@@ -544,10 +557,12 @@ int main(int argc, char **argv) {
         return -1;
       }
 
+	    fprintf(stderr, "******* start rx stream\n");
       srslte_rf_start_rx_stream(&rf, false);
+	    fprintf(stderr, "******* start rx stream done\n");
 
       float rx_gain_offset = 0;
-      printf("Begin SIB Decoding Loop");
+      fprintf(stderr, "******* Begin SIB Decoding Loop");
 
       /* Main loop */
       bool exit_decode_loop = false;
@@ -571,6 +586,7 @@ int main(int argc, char **argv) {
           switch (state) {
             case DECODE_MIB:
               mib_tries++;
+	      fprintf(stderr, "******* Decoding MIB try %i\n", mib_tries);
               if(mib_tries > 20){
                 exit_decode_loop=true;
                 break;
@@ -719,7 +735,7 @@ int main(int argc, char **argv) {
           printf("Finding PSS... Peak: %8.1f, FrameCnt: %d, State: %d\r",
             srslte_sync_get_peak_value(&ue_sync.sfind),
             ue_sync.frame_total_cnt, ue_sync.state);
-          if(sf_cnt > 10000) {
+          if(sf_cnt > 1000) {
             exit_decode_loop = true;
           }
         }

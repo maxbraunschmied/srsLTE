@@ -174,6 +174,7 @@ int srslte_dft_plan_c(srslte_dft_plan_t *plan, const int dft_points, srslte_dft_
   pthread_mutex_lock(&fft_mutex);
 
   int sign = (dir == SRSLTE_DFT_FORWARD) ? FFTW_FORWARD : FFTW_BACKWARD;
+  fprintf(stderr, "***** plan dft 1d\n");
   plan->p = fftwf_plan_dft_1d(dft_points, plan->in, plan->out, sign, FFTW_TYPE);
 
   pthread_mutex_unlock(&fft_mutex);

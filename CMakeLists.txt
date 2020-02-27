@@ -67,11 +67,11 @@ option(ENABLE_SRSENB   "Build srsENB application"                 OFF)
 option(ENABLE_SRSEPC   "Build srsEPC application"                 OFF)
 option(DISABLE_SIMD    "disable simd instructions"                OFF)
 
-option(ENABLE_GUI      "Enable GUI (using srsGUI)"                ON)
+option(ENABLE_GUI      "Enable GUI (using srsGUI)"                OFF)
 option(ENABLE_UHD      "Enable UHD"                               ON)
 option(ENABLE_BLADERF  "Enable BladeRF"                           ON)
 option(ENABLE_SOAPYSDR "Enable SoapySDR"                          OFF)
-option(ENABLE_HARDSIM  "Enable support for SIM cards"             ON)
+option(ENABLE_HARDSIM  "Enable support for SIM cards"             OFF)
 
 option(BUILD_STATIC    "Attempt to statically link external deps" OFF)
 option(RPATH           "Enable RPATH"                             OFF)
