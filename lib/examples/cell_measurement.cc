@@ -299,10 +299,7 @@ int main(int argc, char **argv) {
   prog_args_t prog_args;
   srslte_cell_t cell;
   int64_t sf_cnt;
-  srslte_ue_sync_t ue_sync;
-  srslte_ue_mib_t ue_mib;
   srslte_rf_t rf;
-  srslte_ue_dl_t ue_dl;
   srslte_ofdm_t fft;
   srslte_chest_dl_t chest;
   uint32_t nframes=0;
@@ -310,7 +307,6 @@ int main(int argc, char **argv) {
   uint32_t max_trials = 16;
   uint32_t sfn = 0; // system frame number
   int n;
-  uint8_t bch_payload[SRSLTE_BCH_PAYLOAD_LEN];
   int sfn_offset;
   cf_t *ce[SRSLTE_MAX_PORTS];
   float cfo = 0;
@@ -394,7 +390,11 @@ int main(int argc, char **argv) {
 
   /* begin cell search loop */
   freq = -1;
+  bzero(found_cells, 3*sizeof(srslte_ue_cellsearch_result_t));
   while (! go_exit) {
+    srslte_ue_sync_t ue_sync;
+    srslte_ue_mib_t ue_mib;
+    srslte_ue_dl_t ue_dl;
     bool acks[SRSLTE_MAX_CODEWORDS] = {false};
     /* set rf_freq */
     freq++;
@@ -413,7 +413,6 @@ int main(int argc, char **argv) {
       printf("\n");
     }
 
-    bzero(found_cells, 3*sizeof(srslte_ue_cellsearch_result_t));
 
     INFO("Setting sampling frequency %.2f MHz for PSS search\n", SRSLTE_CS_SAMP_FREQ/1000000);
     srslte_rf_set_rx_srate(&rf, SRSLTE_CS_SAMP_FREQ);
@@ -566,7 +565,6 @@ int main(int argc, char **argv) {
 
       /* Main loop */
       bool exit_decode_loop = false;
-      //state = DECODE_MIB;
       tower_info_t tower;
       tower.frequency = channels[freq].fd;
       tower.earfcn = channels[freq].id;
@@ -574,6 +572,7 @@ int main(int argc, char **argv) {
       float rssi_utra=0,rssi=0, rsrp=0, rsrq=0, snr=0;
       state = DECODE_MIB;
       while ((sf_cnt < prog_args.nof_subframes || prog_args.nof_subframes == -1) && !go_exit && !exit_decode_loop) {
+      uint8_t bch_payload[SRSLTE_BCH_PAYLOAD_LEN];
 
 
         ret = srslte_ue_sync_zerocopy_multi(&ue_sync, sf_buffer);
@@ -596,7 +595,7 @@ int main(int argc, char **argv) {
                 n = srslte_ue_mib_decode(&ue_mib, bch_payload, NULL, &sfn_offset);
                 if (n < 0) {
                   fprintf(stderr, "Error decoding UE MIB\n");
-                  return -1;
+                  break;
                 } else if (n == SRSLTE_UE_MIB_FOUND) {
                   srslte_pbch_mib_unpack(bch_payload, &cell, &sfn);
                   printf("Decoded MIB. SFN: %d, offset: %d\n", sfn, sfn_offset);
@@ -746,6 +745,16 @@ int main(int argc, char **argv) {
           break;
         }
       } // Decoding Loop
+      free(sf_symbols);
+      for (int i = 0; i < SRSLTE_MAX_CODEWORDS; i++) {
+        if (ce[i]) {
+          free(ce[i]);
+        }
+      }
+      srslte_ue_dl_free(&ue_dl);
+      srslte_ue_sync_free(&ue_sync);
+      srslte_ue_mib_free(&ue_mib);
+
     } // if found cell
     //if (freq == nof_freqs) {
     //  freq = -1; //continue loop at the beginning
@@ -757,8 +766,12 @@ int main(int argc, char **argv) {
       free(data[i]);
     }
   }
+  for (int i = 0; i < SRSLTE_MAX_PORTS; i++) {
+    if (sf_buffer[i]) {
+      free(sf_buffer[i]);
+    }
+  }
 
-  srslte_ue_sync_free(&ue_sync);
   srslte_rf_close(&rf);
   printf("\nBye\n");
   exit(0);
