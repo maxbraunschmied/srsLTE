@@ -68,7 +68,7 @@ option(ENABLE_SRSEPC   "Build srsEPC application"                 OFF)
 option(DISABLE_SIMD    "disable simd instructions"                OFF)
 
 option(ENABLE_GUI      "Enable GUI (using srsGUI)"                OFF)
-option(ENABLE_UHD      "Enable UHD"                               ON)
+option(ENABLE_UHD      "Enable UHD"                               OFF)
 option(ENABLE_BLADERF  "Enable BladeRF"                           ON)
 option(ENABLE_SOAPYSDR "Enable SoapySDR"                          OFF)
 option(ENABLE_HARDSIM  "Enable support for SIM cards"             OFF)
