@@ -392,7 +392,7 @@ int main(int argc, char **argv) {
   freq = -1;
   bzero(found_cells, 3*sizeof(srslte_ue_cellsearch_result_t));
   while (! go_exit) {
-srslte_rf_stop_rx_stream(&rf);
+    srslte_rf_stop_rx_stream(&rf);
     srslte_ue_sync_t ue_sync;
     srslte_ue_mib_t ue_mib;
     srslte_ue_dl_t ue_dl;
@@ -421,7 +421,7 @@ srslte_rf_stop_rx_stream(&rf);
     srslte_rf_start_rx_stream(&rf, false);
 
     n = srslte_ue_cellsearch_scan(&cs, found_cells, NULL);
-srslte_rf_stop_rx_stream(&rf); 
+    srslte_rf_stop_rx_stream(&rf); 
    int ret = SRSLTE_UE_MIB_NOTFOUND;
     srslte_cell_t cell;
     if (n < 0) {
